@@ -53,7 +53,7 @@ export default function Home(): JSX.Element | null {
     functionName: "numProposals",
   });
 
-  const nftBalanceOfUser = useContractRead({
+  const nftBalanceOfUser : any = useContractRead({
     abi: CryptoDevsNFTABI,
     address: CryptoDevsNFTAddress,
     functionName: "balanceOf",
@@ -61,6 +61,10 @@ export default function Home(): JSX.Element | null {
   });
 
   async function createProposal(): Promise<void> {
+    if (!address) {
+      window.alert("Please connect your wallet");
+      return;
+    }
     setLoading(true);
     try {
       const tx = await writeContract({
@@ -110,6 +114,7 @@ export default function Home(): JSX.Element | null {
 
   async function fetchAllProposals(): Promise<Proposal[] | undefined> {
     try {
+      if (!numOfProposalsInDAO?.data) return [];
       const proposals: Proposal[] = [];
       for (let i = 0; i < numOfProposalsInDAO.data; i++) {
         const proposal = await fetchProposalById(i);
@@ -124,6 +129,10 @@ export default function Home(): JSX.Element | null {
   }
 
   async function voteForProposal(proposalId: number, vote: "YAY" | "NAY"): Promise<void> {
+    if (!address) {
+      window.alert("Please connect your wallet");
+      return;
+    }
     setLoading(true);
     try {
       const tx = await writeContract({
@@ -141,6 +150,10 @@ export default function Home(): JSX.Element | null {
   }
 
   async function executeProposal(proposalId: number): Promise<void> {
+    if (!address) {
+      window.alert("Please connect your wallet");
+      return;
+    }
     setLoading(true);
     try {
       const tx = await writeContract({
@@ -158,6 +171,10 @@ export default function Home(): JSX.Element | null {
   }
 
   async function withdrawDAOEther(): Promise<void> {
+    if (!address) {
+      window.alert("Please connect your wallet");
+      return;
+    }
     setLoading(true);
     try {
       const tx = await writeContract({
@@ -202,10 +219,10 @@ export default function Home(): JSX.Element | null {
             placeholder="0"
             type="number"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFakeNftTokenId(e.target.value)}
-            className="border border-gray-300 rounded px-3 py-2 w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="border border-gray-300 rounded-full px-3 py-2 w-48 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 shadow-[inset_2px_2px_5px_#d1d1d1,inset_-2px_-2px_5px_#ffffff]"
           />
           <button
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded w-fit transition-colors"
+            className="bg-gray-200 text-gray-800 font-semibold px-4 py-2 rounded-full shadow-[5px_5px_10px_#d1d1d1,-5px_-5px_10px_#ffffff] hover:shadow-[inset_2px_2px_5px_#d1d1d1,inset_-2px_-2px_5px_#ffffff] transition-all"
             onClick={createProposal}
           >
             Create
@@ -230,7 +247,7 @@ export default function Home(): JSX.Element | null {
       return (
         <div className="flex flex-col gap-4 mt-4">
           {proposals.map((p: Proposal, index: number) => (
-            <div key={index} className="border border-gray-200 rounded-lg p-4 shadow-sm bg-white">
+              <div key={index} className="bg-gray-100 rounded-lg p-4 shadow-[5px_5px_10px_#d1d1d1,-5px_-5px_10px_#ffffff]">
               <p className="text-sm">Proposal ID: {p.proposalId}</p>
               <p className="text-sm">Fake NFT to Purchase: {p.nftTokenId}</p>
               <p className="text-sm">Deadline: {p.deadline.toLocaleString()}</p>
@@ -240,13 +257,13 @@ export default function Home(): JSX.Element | null {
               {p.deadline.getTime() > Date.now() && !p.executed ? (
                 <div className="flex gap-2 mt-3">
                   <button
-                    className="bg-green-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded transition-colors"
+                    className="bg-green-200 text-green-800 font-semibold px-4 py-2 rounded-full shadow-[5px_5px_10px_#d1d1d1,-5px_-5px_10px_#ffffff] hover:shadow-[inset_2px_2px_5px_#d1d1d1,inset_-2px_-2px_5px_#ffffff] transition-all"
                     onClick={() => voteForProposal(p.proposalId, "YAY")}
                   >
                     Vote YAY
                   </button>
                   <button
-                    className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded transition-colors"
+                    className="bg-red-200 text-red-800 font-semibold px-4 py-2 rounded-full shadow-[5px_5px_10px_#d1d1d1,-5px_-5px_10px_#ffffff] hover:shadow-[inset_2px_2px_5px_#d1d1d1,inset_-2px_-2px_5px_#ffffff] transition-all"
                     onClick={() => voteForProposal(p.proposalId, "NAY")}
                   >
                     Vote NAY
@@ -255,7 +272,7 @@ export default function Home(): JSX.Element | null {
               ) : p.deadline.getTime() < Date.now() && !p.executed ? (
                 <div className="flex mt-3">
                   <button
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded transition-colors"
+                    className="bg-blue-200 text-blue-800 font-semibold px-4 py-2 rounded-full shadow-[5px_5px_10px_#d1d1d1,-5px_-5px_10px_#ffffff] hover:shadow-[inset_2px_2px_5px_#d1d1d1,inset_-2px_-2px_5px_#ffffff] transition-all"
                     onClick={() => executeProposal(p.proposalId)}
                   >
                     Execute Proposal{" "}
@@ -300,45 +317,45 @@ export default function Home(): JSX.Element | null {
       </Head>
 
       <div className="flex justify-between items-start min-h-screen px-8 py-12 max-w-6xl mx-auto">
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 text-center">
           <h1 className="text-4xl font-bold">Welcome to Crypto Devs!</h1>
           <div className="text-gray-600">Welcome to the DAO!</div>
           <div className="text-gray-600 leading-relaxed">
-            Your CryptoDevs NFT Balance: {nftBalanceOfUser.data.toString()}
+            Your CryptoDevs NFT Balance: {nftBalanceOfUser?.data?.toString()}
             <br />
             {daoBalance.data && (
               <>
                 Treasury Balance:{" "}
-                {formatEther(daoBalance.data.value).toString()} ETH
+                {formatEther(daoBalance?.data.value).toString()} ETH
               </>
             )}
             <br />
-            Total Number of Proposals: {numOfProposalsInDAO.data.toString()}
+            Total Number of Proposals: {numOfProposalsInDAO?.data?.toString()}
           </div>
-          <div className="flex gap-3 mt-2">
+          <div className="flex gap-3 mt-2 justify-center">
             <button
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded transition-colors"
+              className="bg-gray-200 text-gray-800 font-semibold px-5 py-2 rounded-full shadow-[5px_5px_10px_#d1d1d1,-5px_-5px_10px_#ffffff] hover:shadow-[inset_2px_2px_5px_#d1d1d1,inset_-2px_-2px_5px_#ffffff] transition-all"
               onClick={() => setSelectedTab("Create Proposal")}
             >
               Create Proposal
             </button>
             <button
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded transition-colors"
+              className="bg-gray-200 text-gray-800 font-semibold px-5 py-2 rounded-full shadow-[5px_5px_10px_#d1d1d1,-5px_-5px_10px_#ffffff] hover:shadow-[inset_2px_2px_5px_#d1d1d1,inset_-2px_-2px_5px_#ffffff] transition-all"
               onClick={() => setSelectedTab("View Proposals")}
             >
               View Proposals
             </button>
           </div>
           {renderTabs()}
-          {address && address.toLowerCase() === (daoOwner.data as string).toLowerCase() ? (
+          {address && daoOwner?.data && address.toLowerCase() === daoOwner.data.toLowerCase() ? (
             <div className="mt-4">
               {loading ? (
-                <button className="bg-gray-400 text-white font-semibold px-5 py-2 rounded cursor-not-allowed">
+                <button className="bg-gray-300 text-gray-600 font-semibold px-5 py-2 rounded-full shadow-[inset_2px_2px_5px_#d1d1d1,inset_-2px_-2px_5px_#ffffff] cursor-not-allowed">
                   Loading...
                 </button>
               ) : (
                 <button
-                  className="bg-red-600 hover:bg-red-700 text-white font-semibold px-5 py-2 rounded transition-colors"
+                  className="bg-red-200 text-red-800 font-semibold px-5 py-2 rounded-full shadow-[5px_5px_10px_#d1d1d1,-5px_-5px_10px_#ffffff] hover:shadow-[inset_2px_2px_5px_#d1d1d1,inset_-2px_-2px_5px_#ffffff] transition-all"
                   onClick={withdrawDAOEther}
                 >
                   Withdraw DAO ETH
@@ -349,9 +366,7 @@ export default function Home(): JSX.Element | null {
             ""
           )}
         </div>
-        <div>
-          <img className="w-64 h-auto rounded-lg" src="https://i.imgur.com/buNhbF7.png" />
-        </div>
+      
       </div>
     </div>
   );
