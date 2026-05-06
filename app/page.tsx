@@ -317,8 +317,9 @@ export default function Home(): JSX.Element | null {
       </Head>
 
       <div className="flex justify-between items-start min-h-screen px-8 py-12 max-w-6xl mx-auto">
-        <div className="flex flex-col gap-4 text-center">
-          <h1 className="text-4xl font-bold">Welcome to Crypto Devs!</h1>
+       
+        {address ? (<div className="flex flex-col gap-4 text-center">
+         <h1 className="text-4xl font-bold">Welcome to Crypto Devs!</h1>
           <div className="text-gray-600">Welcome to the DAO!</div>
           <div className="text-gray-600 leading-relaxed">
             Your CryptoDevs NFT Balance: {nftBalanceOfUser?.data?.toString()}
@@ -363,10 +364,12 @@ export default function Home(): JSX.Element | null {
               )}
             </div>
           ) : (
-            ""
+           <div className="flex justify-center items-center min-h-screen">
+        <ConnectButton />
+      </div>
           )}
         </div>
-      
+      ) : ""}
       </div>
     </div>
   );
